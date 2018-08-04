@@ -10,7 +10,7 @@ include("page/header.php");
   <div class="col-lg-12" id="application-form-birth">
     <div class="page-header">
       <h1>Birth Certificate Application Formss</h1>
-
+ 
         <form id="birth_form" action="/birth/form" class="form-horizontal" method="post" novalidate="novalidate" wtx-context="F5059A7D-C616-4FC6-803A-8EB5558B22E9">
         
 
