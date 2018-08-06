@@ -1,3 +1,24 @@
+<?php
+include("db.php");
+    $sqlentreperson = "SELECT * FROM child ";
+    $resultentreperson = mysqli_query($con,$sqlentreperson);
+
+    $node = array();
+
+
+
+    while($row = mysqli_fetch_array($resultentreperson)){
+   $entreperson = array ('data' => array(
+  'id'=>$nodeID=$row['registrynum'],
+  $nodeName='name' =>$row['fname']
+  ));
+array_push($node,$entreperson);
+    }
+    $jsonstring = json_encode($json);
+    echo  json_encode($entreperson);
+
+
+?>
 <!DOCTYPE html>
 <html>
 	<head>
@@ -15,6 +36,7 @@
 				height: 700px;
 				border: 1px solid #aaa;
 				background-color: black;
+
 			}
 
       .alert {
@@ -168,8 +190,10 @@ var cy = cytoscape({
   style: [{
     selector: 'node',
     style: {
-      
-      'text-valign': 'center',
+      label:'data(id)',
+      shape:'circle',
+      'text-valign':'center',
+      'width':90,
       'background-color': 'green'
      
     }
@@ -183,41 +207,28 @@ var cy = cytoscape({
     }
   }
 ],
-minZoom: 1e-50,
-  maxZoom: 1e50,
-  zoomingEnabled: true,
-  userZoomingEnabled: true,
-  panningEnabled: true,
-  userPanningEnabled: true,
-  boxSelectionEnabled: false,
-  selectionType: 'single',
-  touchTapThreshold: 8,
-  desktopTapThreshold: 4,
-  autolock: false,
-  autoungrabify: false,
-  autounselectify: false,
+
   layout: {
     name: 'circle',
+
     rows: 1
   }});
 cy.on('click', 'node', function(evt){
- 		  
-     		
+ 		  var count = <?php echo json_encode($nodeID);?>
+   
+        
+        
      		var eles = cy.add([
-  { group: "nodes", data: { id:nodeCountId }, position: { x:xlocation, y:ylocation } },
-  { group: "edges", data: { id: edgeCountId, source: this.id(), target: nodeCountId } }
+  { group: "nodes", data: { id:count }, position: { x:xlocation, y:ylocation } },
+  { group: "edges", data: { id: edgeCountId, source: this.id(), target: count } }
 ]);
- alert("this is the id of the node "+this.id()+" connected to this node "+nodeCountId);		
+ alert("this is the id of the node "+this.id()+" connected to this node "+count);		
 nodeCountId += 1;
 ylocation += 100;
 xlocation += 100;
 edgeCountId += 1;
-
 });
-cy.edgee('click','edge',function(evt){
 
-  alert("asdasdasda");
-});
 
 })();
 </script>
