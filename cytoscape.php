@@ -1,30 +1,39 @@
 <?php
 include("db.php");
-    $sqlentreperson = "SELECT * FROM child ";
+    $sqlentreperson = "SELECT * FROM person ";
     $resultentreperson = mysqli_query($con,$sqlentreperson);
 
     $node = array();
-
+    $nodeDisplay = array();
+    $id_number = array();
+    $mother_id = array();
+    $father_id = array();
+    $gender = array();
 
 
     while($row = mysqli_fetch_array($resultentreperson)){
-   $entreperson = array ('data' => array(
-  'id'=>$nodeID=$row['registrynum'],
-  $nodeName='name' =>$row['fname']
-  ));
 array_push($node,$entreperson);
+array_push($id_number,$row['id_number']);
+array_push($mother_id,$row['mother_id']);
+array_push($father_id,$row['father_id']);
+array_push($gender,$row['gender']);
+$jsonstring = json_encode($json);
     }
-    $jsonstring = json_encode($json);
-    echo  json_encode($entreperson);
-
-
+ 
+$id_number_to_json = json_encode(array($id_number));
+$mother_id_to_json = json_encode(array($mother_id));
+$father_id_to_json = json_encode(array($father_id));
+$gender_id_to_json = json_encode(array($gender));
+ $id_count = sizeof($id_number);
+   
 ?>
 <!DOCTYPE html>
 <html>
 	<head>
 		<meta charset="UTF-8">
 		<title>Cytoscape</title>
-		<link rel="stylesheet" href="css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
 		<style>
 			@media screen and (max-width:480px){
 				#search{width:100%;}
@@ -32,10 +41,11 @@ array_push($node,$entreperson);
 			}
 
 			#cy {
-				width: 100%;
+				width: 80%;
 				height: 700px;
 				border: 1px solid #aaa;
 				background-color: black;
+        margin-left:300px ; 
 
 			}
 
@@ -51,6 +61,26 @@ array_push($node,$entreperson);
 	<body>
     <div class="wrapper">
       
+    <div id="myModal" class="modal"role="dialog">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Person Information</h5>
+      </div>
+      <div class="modal-body">
+        <div id="modalInformation"></div>
+      <div id="ID"></div>
+      </div> 
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal" >Close</button>
+    </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    </div>
+    
      <div class="container-fluid">
         <div id="content">
 
@@ -60,10 +90,13 @@ array_push($node,$entreperson);
 	</div>
 	</div>
 
+
+<script src="js/jquery-3.3.1.min.js"></script>
 <script src="js/dagre.min.js"></script>
 <script src="js/cytoscape.js"></script>
 <script src="js/cytoscape-dagre.js"></script>
-
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
 <script>
 (function() {
 var nodeCountId = 11;
@@ -73,160 +106,92 @@ var xlocation = 100;
 
 var cy = cytoscape({
   container: document.getElementById('cy'),
-  elements: {
-    nodes: [{
-      data: {
-        id: 'DS001',
-        title: '1'
-      },
-    }, {
-      data: {
-        id: 'DS002',
-        title: '2'
-      }
-    }, {
-      data: {
-        id: 'DS003',
-        title: '3'
-      }
-    }, {
-      data: {
-        id: 'DS004',
-        title: '4'
-      }
-    }, {
-      data: {
-        id: 'CV001',
-        title: '5'
-      }
-    }, {
-      data: {
-        id: 'CV002',
-        title: '6'
-      }
-    }, {
-      data: {
-        id: 'CV003',
-        title: '7'
-      }
-    }, {
-      data: {
-        id: 'CV004',
-        title: '8'
-      }
-    }, {
-      data: {
-        id: 'CV005',
-        title: '9'
-      }
-    }, {
-      data: {
-        id: 'CV006',
-        title: '11'
-      }
-    }],
-    edges: [{
-      data: {
-        id: '1',
-        source: 'DS001',
-        target: 'CV001'
-      }
-    }, {
-      data: {
-        id: '2',
-        source: 'DS002',
-        target: 'CV001'
-      }
-    }, {
-      data: {
-        id: '3',
-        source: 'CV001',
-        target: 'CV002'
-      }
-    }, {
-      data: {
-        id: '4',
-        source: 'CV002',
-        target: 'CV003'
-      }
-    }, {
-      data: {
-        id: '5',
-        source: 'DS004',
-        target: 'CV003'
-      }
-    }, {
-      data: {
-        id: '6',
-        source: 'DS003',
-        target: 'CV004'
-      }
-    }, {
-      data: {
-        id: '7',
-        source: 'CV004',
-        target: 'CV005'
-      }
-    }, {
-      data: {
-        id: '8',
-        source: 'CV003',
-        target: 'CV005'
-      }
-    }, {
-      data: {
-        id: '9',
-        source: 'CV006',
-        target: 'CV005'
-      }
-    }],
-    selected: true, // whether the element is selected (default false)
-    selectable: true // whether the selection state is mutable (default true)
-
-  },
   layout: {
-    name: "dagre"
+    name: "circle"
   },
   style: [{
     selector: 'node',
     style: {
-      label:'data(id)',
       shape:'circle',
       'text-valign':'center',
-      'width':90,
-      'background-color': 'green'
-     
-    }
+      'background-color': 'data(faveColor)',
+      // 'display':'none' 
+      }
   }, {
     selector: 'edge',
     style: {
-      'width': 8,
-      'line-color': '#9acd32',
-      'target-arrow-color': '#DC143C',
-      'target-arrow-shape': 'triangle'
+      'width': 4,
+      'line-color': 'data(faveColor)',
+      'target-arrow-color': 'data(faveColor)',
+      'target-arrow-shape': 'triangle-backcurve',
+      'curve-style': 'bezier',
+      
+     
     }
   }
-],
+]});
+  
+var id_count = <?php echo $id_count?>;
+var id_number = <?php echo json_encode($id_number);?>;
+var mother_id = <?php echo json_encode($mother_id);?>;
+var father_id = <?php echo json_encode($father_id);?>;
+var gender = <?php echo json_encode($gender);?>;
+  for (var i = 0; i <id_count; i++) {
+    if(gender[i]=='male'){
+      cy.add({
+        data: { id: id_number[i],faveColor:'#00FFFF'}
+        });
+    }else{
+      cy.add({
+        data: { id: id_number[i],faveColor:'#FF4500'}
+        });
+    }
+ 
+    
+      var target_id =  id_number[i];
+      var source_mother =  mother_id[i];
+      var source_father =  father_id[i];
 
-  layout: {
-    name: 'circle',
+        if(mother_id[i]!=null){
+     
+       cy.add({
+        data: {
+            id: 'mother' + i,
+            source: source_mother,
+            target: target_id,faveColor:'#FF4500'
+        }
+    });
+  
+        }
+        if(father_id[i]!=null){
 
-    rows: 1
-  }});
-cy.on('click', 'node', function(evt){
- 		  var count = <?php echo json_encode($nodeID);?>
-   
-        
-        
-     		var eles = cy.add([
-  { group: "nodes", data: { id:count }, position: { x:xlocation, y:ylocation } },
-  { group: "edges", data: { id: edgeCountId, source: this.id(), target: count } }
-]);
- alert("this is the id of the node "+this.id()+" connected to this node "+count);		
-nodeCountId += 1;
-ylocation += 100;
-xlocation += 100;
-edgeCountId += 1;
+    cy.add({
+        data: {
+            id: 'father' + i,
+            source: source_father,
+            target: target_id,
+            faveColor:'#00FFFF'
+        }
+    });
+    cy.layout({
+    name: 'dagre'
+}).run();
+}
+  }
+
+  cy.on('click', 'node', function(evt){
+    console.log("awwawaw");
+
+    console.log($);
+    console.log(jQuery);
+    $.get('person.php?id=' + this.id(), function(response) {
+        var data = JSON.parse(response);
+        console.log(data.id);
+        console.log(data.name);
+        $('#ID').html("<p>ID: "  + data.id + "</p>");
+        $('#myModal').modal('show');
+    }); 
+
 });
 
 
